@@ -1,109 +1,200 @@
-# 🧬 AI4TumorMicroenvironment
+# AI4TumorMicroenvironment
 
-Decoding tumor microenvironment using single-cell RNA sequencing and deep learning. This project integrates bioinformatics, machine learning, and AI to identify cellular heterogeneity, classify cell types, and uncover tumor-immune interactions.
-
-
-### Understanding Tumor Cells Using AI + Single-Cell RNA Sequencing
+### Deep Learning-Based Representation Learning for Cell-Type Classification in Tumor Microenvironment scRNA-seq Data
 
 ---
 
-## 🚀 What did we actually do?
+## 1. Problem Statement
 
-In simple terms 👇
+The tumor microenvironment (TME) consists of heterogeneous cell populations whose composition critically influences cancer progression and therapeutic response.
 
-👉 Tumors are made of **many different types of cells** (immune cells, cancer cells, etc.)
-👉 Using **single-cell RNA sequencing (scRNA-seq)**, we can study each cell individually
+Single-cell RNA sequencing (scRNA-seq) enables profiling at cellular resolution, but introduces challenges:
 
-But…
+* High dimensionality (~20,000 genes)
+* Large-scale datasets (400K+ cells)
+* Complex, non-linear biological variability
 
-❌ The data is **huge (400K+ cells)**
-❌ Hard to analyze manually
-
----
-
-### 💡 So what did we do?
-
-We built an **AI-powered pipeline** that:
-
-1. 📥 Loads large scRNA-seq data
-2. 🧹 Cleans and processes it
-3. 🔍 Identifies different cell types
-4. 🧠 Uses deep learning to learn better features
-5. 🤖 Trains a model to classify cell types
-6. 📊 Compares:
-
-   * Traditional method (**PCA**)
-   * AI-based method (**Autoencoder**)
+Traditional linear methods (e.g., PCA) may fail to capture this structure effectively.
 
 ---
 
-## 🧠 Why is this important?
+## 2. Objective
 
-👉 Helps understand **tumor microenvironment (TME)**
-👉 Improves **cell-type classification**
-👉 Supports **cancer research + drug discovery**
+To evaluate whether **non-linear latent representations learned via deep learning** can improve cell-type classification compared to conventional dimensionality reduction techniques.
 
 ---
 
-## 🔥 Key Idea
+## 3. Methodology
 
-Instead of using normal statistical features (PCA),
-we used **deep learning (Autoencoder)** to learn hidden patterns in the data.
+### 3.1 Data Acquisition
 
-👉 Then we checked:
+* Dataset: Triple-Negative Breast Cancer (TNBC) scRNA-seq
+* Source: CZ CELLxGENE
+* Scale: ~427,000 cells
 
-“Does AI give better features than traditional methods?”
+Due to memory constraints, analysis is performed using:
 
----
-
-## 📊 Final Result (Simple)
-
-Both methods performed very well, but:
-
-👉 **Latent (AI) features captured biological patterns better**
+* Backed data loading (`scanpy`)
+* Subsampling (20,000 cells)
 
 ---
 
-## ⚠️ Real-world note
+### 3.2 Preprocessing Pipeline
 
-This is a research-style project, so:
+The following standard scRNA-seq preprocessing steps were applied:
 
-> Further validation on independent datasets is required.
-
----
-
-## 📦 What makes this project strong?
-
-✔ Handles very large biological data
-✔ Combines Bioinformatics + AI
-✔ Uses deep learning (not just basic ML)
-✔ Fully reproducible setup
-✔ Clean project structure
+* Mitochondrial gene filtering
+* Library size normalization
+* Log-transformation
+* Highly variable gene selection (2,000 genes)
+* Z-score scaling
 
 ---
 
-## 🧪 Tech Stack
+### 3.3 Unsupervised Analysis
 
-* Python
-* Scanpy (scRNA-seq analysis)
-* PyTorch (Deep Learning)
-* Scikit-learn (ML)
+* Principal Component Analysis (PCA)
+* Neighborhood graph construction
+* Leiden clustering
+* UMAP visualization
+
+Clusters were annotated using marker-based scoring.
 
 ---
 
-## ▶️ How to Run
+### 3.4 Representation Learning
+
+Two feature spaces were constructed:
+
+#### (A) Linear Representation
+
+* PCA embeddings
+
+#### (B) Non-linear Representation
+
+* Autoencoder (PyTorch-based)
+* Learned latent embeddings
+
+---
+
+### 3.5 Classification Framework
+
+* Model: Random Forest Classifier
+* Input:
+
+  * PCA features
+  * Latent embeddings
+* Evaluation:
+
+  * Accuracy
+  * Classification report (Precision, Recall, F1-score)
+
+---
+
+## 4. Results
+
+Both representations achieved high classification accuracy:
+
+| Feature Type | Accuracy |
+| ------------ | -------- |
+| PCA          | ~1.0     |
+| Latent       | ~1.0     |
+
+### Interpretation
+
+Although classification performance appears comparable, latent representations:
+
+* Capture non-linear gene expression structure
+* Provide biologically meaningful embedding space
+* Offer improved representation of cellular heterogeneity
+
+---
+
+## 5. Discussion
+
+The comparable performance suggests that:
+
+* For well-separated cell populations, PCA remains competitive
+* However, deep learning embeddings provide a more expressive feature space
+
+This becomes particularly relevant for:
+
+* Rare cell populations
+* Subtle transcriptional differences
+* Cross-dataset generalization
+
+---
+
+## 6. Limitations
+
+* Subsampling may reduce representation of rare cell types
+* Evaluation limited to a single dataset
+* No external validation performed
+
+> Further validation across independent datasets is required to establish generalizability.
+
+---
+
+## 7. Reproducibility
+
+### Environment Setup
 
 ```bash
 conda env create -f environment.yml
 conda activate scRNA_env
+```
+
+### Execution
+
+```bash
 python notebooks/01_pipeline.py
 ```
 
 ---
 
-## 👩‍💻 Author
+## 8. Project Structure
 
-**Keerthana Reddy**
-Bioinformatics Student | AI + Genomics
+```text
+AI4TumorMicroenvironment/
+│
+├── data/raw/                 # Input dataset (.h5ad)
+├── notebooks/               # Main pipeline
+├── results/                 # Outputs (figures, metrics)
+├── src/                     # Modular code (future expansion)
+├── environment.yml          # Conda environment
+├── requirements.txt         # Pip dependencies
+└── README.md
+```
+
+---
+
+## 9. Technical Stack
+
+* Scanpy (single-cell analysis)
+* PyTorch (representation learning)
+* Scikit-learn (classification)
+* NumPy / Pandas (data handling)
+
+---
+
+## 10. Future Directions
+
+* Cell–cell interaction analysis (ligand–receptor modeling)
+* Integration with spatial transcriptomics
+* Cross-cohort validation
+* Graph-based deep learning (GNNs)
+
+---
+
+## 11. Author
+
+Keerthana Reddy
+B.Tech Bioinformatics
+
+---
+
+## 12. Summary
+
+This work demonstrates a structured comparison between linear and non-linear representations in scRNA-seq analysis, highlighting the role of deep learning in capturing complex biological variability within the tumor microenvironment.
 
 ---
