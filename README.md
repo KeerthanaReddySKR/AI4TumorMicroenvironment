@@ -100,6 +100,9 @@ Both representations achieved high classification accuracy:
 | PCA          | ~1.0     |
 | Latent       | ~1.0     |
 
+<img width="640" height="480" alt="Figure_1" src="https://github.com/user-attachments/assets/eaaa745b-773b-487f-b5af-8acd7c760463" />
+
+
 ### Interpretation
 
 Although classification performance appears comparable, latent representations:
